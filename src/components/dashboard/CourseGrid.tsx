@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Filter, SortAsc, SortDesc } from "lucide-react";
+import CourseCard from "./CourseCard";
 
 interface Course {
   id: string;
@@ -20,86 +21,8 @@ interface Course {
   progress: number;
   category: string;
   duration: string;
+  lessons?: number;
 }
-
-interface CourseCardProps {
-  title?: string;
-  description?: string;
-  thumbnail?: string;
-  progress?: number;
-  category?: string;
-  duration?: string;
-}
-
-// Inline CourseCard component since the import was causing issues
-const CourseCard = ({
-  title = "Course Title",
-  description = "Course description goes here",
-  thumbnail = "https://images.unsplash.com/photo-1677442135136-760c813028c4?w=800&q=80",
-  progress = 0,
-  category = "General",
-  duration = "8 weeks",
-}: CourseCardProps) => {
-  return (
-    <div className="flex flex-col bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md h-full border border-gray-200 dark:border-gray-700">
-      <div className="relative h-48">
-        <img
-          src={thumbnail}
-          alt={title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
-          {category}
-        </div>
-      </div>
-
-      <div className="p-4 flex flex-col flex-grow">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-          {title}
-        </h3>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">
-          {description}
-        </p>
-
-        <div className="mt-auto">
-          <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
-            <span>{duration}</span>
-            <span>{progress}% complete</span>
-          </div>
-
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-4">
-            <div
-              className="bg-blue-500 h-2 rounded-full"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-
-          <div className="flex space-x-2">
-            <Button className="flex-1">
-              {progress > 0 ? "Continue" : "Start"} Learning
-            </Button>
-            <Button variant="outline" size="icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-4 w-4"
-              >
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-              </svg>
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 interface CourseGridProps {
   courses?: Course[];
@@ -119,6 +42,7 @@ const CourseGrid = ({
       progress: 65,
       category: "AI",
       duration: "8 weeks",
+      lessons: 12,
     },
     {
       id: "2",
@@ -129,6 +53,7 @@ const CourseGrid = ({
       progress: 32,
       category: "Web Development",
       duration: "10 weeks",
+      lessons: 24,
     },
     {
       id: "3",
@@ -140,6 +65,7 @@ const CourseGrid = ({
       progress: 78,
       category: "Data Science",
       duration: "12 weeks",
+      lessons: 18,
     },
     {
       id: "4",
@@ -150,6 +76,7 @@ const CourseGrid = ({
       progress: 45,
       category: "AI",
       duration: "9 weeks",
+      lessons: 15,
     },
     {
       id: "5",
@@ -161,6 +88,7 @@ const CourseGrid = ({
       progress: 12,
       category: "Mobile Development",
       duration: "8 weeks",
+      lessons: 20,
     },
     {
       id: "6",
@@ -172,6 +100,7 @@ const CourseGrid = ({
       progress: 50,
       category: "Cloud Computing",
       duration: "6 weeks",
+      lessons: 10,
     },
   ],
   title = "Recommended Courses",
@@ -327,12 +256,14 @@ CourseGrid.Content = ({ courses }: { courses: Course[] }) => {
       {courses.map((course) => (
         <CourseCard
           key={course.id}
+          id={course.id}
           title={course.title}
           description={course.description}
           thumbnail={course.thumbnail}
           progress={course.progress}
           category={course.category}
           duration={course.duration}
+          lessons={course.lessons}
         />
       ))}
     </div>

@@ -12,8 +12,6 @@ import {
   Smartphone,
   Link,
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import courseService, { Course } from "@/services/courseService";
 
 interface RecommendationProps {
   id: string;
@@ -36,25 +34,66 @@ interface WelcomeAreaProps {
 
 const WelcomeArea = ({
   userName = "Alex",
-  recommendations: initialRecommendations,
-  lastCourse: initialLastCourse,
-}: WelcomeAreaProps) => {
-  const { currentUser } = useAuth();
-  const [recommendations, setRecommendations] = useState<RecommendationProps[]>(
-    [],
-  );
-  const [lastCourse, setLastCourse] = useState<{
-    id: string;
-    title: string;
-    progress: number;
-    timeLeft: string;
-  }>({
-    id: "",
+  recommendations: initialRecommendations = [],
+  lastCourse: initialLastCourse = {
+    id: "course-1",
     title: "Introduction to Neural Networks",
     progress: 65,
     timeLeft: "2h 15m",
-  });
-  const [loading, setLoading] = useState(true);
+  },
+}: WelcomeAreaProps) => {
+  const [recommendations, setRecommendations] = useState<RecommendationProps[]>(
+    initialRecommendations.length > 0
+      ? initialRecommendations
+      : [
+          {
+            id: "topic-1",
+            title: "Machine Learning Basics",
+            description:
+              "Learn the fundamentals of machine learning algorithms",
+            duration: "1h 30m",
+            icon: <Sparkles className="h-5 w-5 text-purple-500" />,
+          },
+          {
+            id: "topic-2",
+            title: "Neural Networks Architecture",
+            description: "Understand how neural networks are structured",
+            duration: "2h 15m",
+            icon: <BookOpen className="h-5 w-5 text-blue-500" />,
+          },
+          {
+            id: "topic-3",
+            title: "Data Visualization Techniques",
+            description: "Master data visualization for better insights",
+            duration: "1h 45m",
+            icon: <BarChart2 className="h-5 w-5 text-green-500" />,
+          },
+          {
+            id: "topic-4",
+            title: "Cloud Computing for AI",
+            description: "Deploy AI models using cloud infrastructure",
+            duration: "2h 00m",
+            icon: <Cloud className="h-5 w-5 text-sky-500" />,
+          },
+          {
+            id: "topic-5",
+            title: "Mobile AI Applications",
+            description: "Build AI-powered mobile applications",
+            duration: "1h 30m",
+            icon: <Smartphone className="h-5 w-5 text-amber-500" />,
+          },
+          {
+            id: "topic-6",
+            title: "API Integration for AI Services",
+            description: "Connect your applications to AI services",
+            duration: "1h 15m",
+            icon: <Link className="h-5 w-5 text-indigo-500" />,
+          },
+        ],
+  );
+
+  const [lastCourse, setLastCourse] = useState(initialLastCourse);
+  const [loading, setLoading] = useState(false);
 
   // Get icon component based on icon name
   const getIconComponent = (iconName: string) => {
@@ -71,55 +110,6 @@ const WelcomeArea = ({
       iconMap[iconName] || <Sparkles className="h-5 w-5 text-purple-500" />
     );
   };
-
-  // Fetch recommendations and last course on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Get user ID (or use 'guest' if not logged in)
-        const userId = currentUser?.uid || "guest";
-
-        // Get daily recommended topics
-        const dailyTopics = courseService.getDailyRecommendedTopics(userId);
-        const topicsWithIcons = dailyTopics.map((topic, index) => ({
-          id: `topic-${index + 1}`,
-          title: topic.title,
-          description: topic.description,
-          icon: getIconComponent(topic.icon),
-        }));
-
-        // Get in-progress courses
-        const inProgressCourses = courseService.getCoursesInProgress();
-        let lastCourseData = {
-          id: "",
-          title: "Introduction to Neural Networks",
-          progress: 65,
-          timeLeft: "2h 15m",
-        };
-
-        if (inProgressCourses.length > 0) {
-          const mostRecent = inProgressCourses[0];
-          lastCourseData = {
-            id: mostRecent.id,
-            title: mostRecent.title,
-            progress: mostRecent.progress,
-            // Assuming a timeLeft property doesn't exist on Course, calculate it or use a default
-            timeLeft: "2h 15m",
-          };
-        }
-
-        setRecommendations(topicsWithIcons);
-        setLastCourse(lastCourseData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [currentUser]);
 
   return (
     <Card className="w-full bg-white dark:bg-gray-800">
